@@ -1,5 +1,5 @@
 {
-  "name": "proyecto-electron",
+  "name": "sopa-de-letras-electron",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
