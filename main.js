@@ -44,9 +44,84 @@ const createMenu = () => {
                         mainWindow.webContents.send('new-game')
                     }
                 },
-
+                {
+                    label:'Pausar/Reanudar',
+                    accelerator: 'Space',
+                    click: () => {
+                        mainWindow.webContents.send('pause-game')
+                    }
+                },
+                {type: 'separator'},
+                {
+                    label:'Guardar partida',
+                    accelerator:'CmdOrCtrl+S',
+                    click: () => {
+                        saveGame()
+                    }
+                },
+                {
+                    label:'Cargar Partida',
+                    accelerator:'CmdOrCtrl+O',
+                    click: () => {
+                        LoadGame()
+                    }
+                },
+                {type:'separator'},
+                {
+                    label:'Salir',
+                    accelerator: proccess.platform === 'darwin' ? 'Cmd+Q':'Ctrl+Q',
+                    click: ()   => {
+                        app.quit()
+                    }
+                }
             ]
-        }
+        },
+
+// Categorias 
+
+        {
+            label:'Categorias',
+            submenu: [
+                {
+                    label:'Animales',
+                    type:'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-category','animals')
+                    }
+                },
+                {
+                    label:'Países',
+                    type:'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-category','countries')
+                    }
+                },
+                {
+                    label:'Ciencia',
+                    type:'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-category','science')
+                    }
+                },
+                { 
+                    label:'Deportes',
+                    type:'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-category','sports')
+                    }
+                }
+            ]
+        },
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
     ]
 }
 
