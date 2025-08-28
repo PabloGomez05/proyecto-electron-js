@@ -112,18 +112,111 @@ const createMenu = () => {
                 }
             ]
         },
+
+        // Niveles de dificultad
+        {
+            label: 'Dificultad',
+            submenu: [
+                {
+                    label: 'Fácil (10x10)',
+                    type: 'radio',
+                    checked: true,
+                    click: () => {
+                        mainWindow.webContents.send('change-difficulty', 'easy')
+                    }
+                },
+                {
+                    label: 'Medio (12x12)',
+                    type: 'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-difficulty', 'medium')
+                    }
+                },
+                {
+                    label: 'Difícil (15x15)',
+                    type: 'radio',
+                    click: () => {
+                        mainWindow.webContents.send('change-difficulty', 'hard')
+                    }
+                }
+            ]
+        },
+
+        //Funcion para poder ver estadisticas, configuracion y poder poner pantalla completa.
         
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        {
+            label: 'Ver',
+            submenu: [
+                {
+                    label: 'Estadísticas',
+                    accelerator: 'CmdOrCtrl+E',
+                    click: () => {
+                        showStats()
+                    }
+                },
+                {
+                    label: 'Configuración',
+                    accelerator: 'CmdOrCtrl+,',
+                    click: () => {
+                        showSettings()
+                    }
+                },
+                { type: 'separator' },
+                {
+                    label: 'Pantalla Completa',
+                    accelerator: process.platform === 'darwin' ? 'Ctrl+Cmd+F' : 'F11',
+                    click: () => {
+                        mainWindow.setFullScreen(!mainWindow.isFullScreen())
+                    }
+                }
+            ]
+        },
+
+        // Ayuda para el usuario con el respectivo manual, detalles sobre el creador de la app, la version e informacion de la licencia.
+
+        {
+            label: 'Ayuda',
+            submenu: [
+                {
+                    label: 'Manual de Usuario',
+                    click: () => {
+                        showUserManual()
+                    }
+                },
+                {
+                    label: 'Acerca de',
+                    click: () => {
+                        showAbout()
+                    }
+                }
+            ]
+        } 
     ]
+
+   // Menú específico para macOS
+    if (process.platform === 'darwin') {
+        template.unshift({
+            label: app.getName(),
+            submenu: [
+                { role: 'about' },
+                { type: 'separator' },
+                { role: 'services' },
+                { type: 'separator' },
+                { role: 'hide' },
+                { role: 'hideothers' },
+                { role: 'unhide' },
+                { type: 'separator' },
+                { role: 'quit' }
+            ]
+        })
+    }
+
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+    
+
 }
+
 
 
 app.whenReady().then(() => {
