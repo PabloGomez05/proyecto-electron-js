@@ -10,9 +10,9 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     min-height: 100vh;
-    display: flex; /* Habilita Flexbox */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     overflow: hidden;
 }
 /* Contenedor principal */
