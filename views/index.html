@@ -3,17 +3,140 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <title>Sopa de letras Electron</title>
+    <meta  http-equiv="Content-Security-Policy"content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy"content="default-src 'self'; script-src 'self'" />
+    <title>Sopa de letras Electron JS</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   </head>
   <body>
-    <h1>Lamento Boliviano</h1>
+      <div class="app-container">
+        <!-- Header con información del juego -->
+        <header class="game-header">
+            <div class="header-left">
+                <h1><i class="fas fa-search"></i> Sopa de Letras</h1>
+                <div class="game-info">
+                    <span class="category-display">Categoría: <strong id="current-category">Animales</strong></span>
+                    <span class="difficulty-display">Dificultad: <strong id="current-difficulty">Fácil</strong></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-star"></i>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="found-counter">0/0</span>
+                    </div>
+                </div>
+                <div class="game-controls">
+                    <button id="pause-btn" class="control-btn" title="Pausar (Space)">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button id="new-game-btn" class="control-btn" title="Nueva Partida (Ctrl+N)">
+                        <i class="fas fa-refresh"></i>
+                    </button>
+                    <button id="settings-btn" class="control-btn" title="Configuración">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+            <!-- Contenido principal del juego -->
+        <main class="game-content">
+            <!-- Panel izquierdo - Lista de palabras -->
+            <aside class="words-panel">
+                <h3><i class="fas fa-list"></i> Palabras a encontrar</h3>
+                <div id="words-list" class="words-list">
+                    <!-- Las palabras se cargarán dinámicamente -->
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                    <span class="progress-text">0% completado</span>
+                </div>
+            </aside>
+
+            <!-- Panel central - Grilla del juego -->
+            <section class="game-grid-container">
+                <div class="grid-wrapper">
+                    <div id="word-grid" class="word-grid">
+                        <!-- La grilla se generará dinámicamente -->
+                    </div>
+                    <div id="selection-overlay" class="selection-overlay"></div>
+                </div>
+                
+                <!-- Mensaje de estado del juego -->
+                <div id="game-message" class="game-message hidden">
+                    <div class="message-content">
+                        <i class="message-icon"></i>
+                        <h3 class="message-title"></h3>
+                        <p class="message-text"></p>
+                        <button id="message-action" class="message-btn"></button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Panel de configuración rápida -->
+        <div id="quick-settings" class="quick-settings hidden">
+            <div class="settings-content">
+                <h3>Configuración Rápida</h3>
+                
+                <div class="setting-group">
+                    <label>Categoría:</label>
+                    <select id="category-select">
+                        <option value="animals">Animales</option>
+                        <option value="countries">Países</option>
+                        <option value="science">Ciencias</option>
+                        <option value="sports">Deportes</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Dificultad:</label>
+                    <select id="difficulty-select">
+                        <option value="easy">Fácil (10x10)</option>
+                        <option value="medium">Medio (12x12)</option>
+                        <option value="hard">Difícil (15x15)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>Tiempo límite:</label>
+                    <select id="time-limit-select">
+                        <option value="0">Sin límite</option>
+                        <option value="300">5 minutos</option>
+                        <option value="600">10 minutos</option>
+                        <option value="900">15 minutos</option>
+                    </select>
+                </div>
+                
+                <div class="settings-actions">
+                    <button id="apply-settings" class="btn btn-primary">Aplicar</button>
+                    <button id="close-settings" class="btn btn-secondary">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner de carga -->
+        <div id="loading" class="loading-overlay">
+            <div class="spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Generando nueva sopa de letras...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts del juego -->
+    <script src="../src/game-logic.js"></script>
+    <script src="../src/storage.js"></script>
+    <script src="../src/renderer.js"></script>
   </body>
 </html>

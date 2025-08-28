@@ -5,8 +5,8 @@ let mainWindow
 
 const createWindow = () => {
     const win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1000,
+        height: 800,
         minWidth:800,
         minHeight:600,
         icon: path.join(__dirname,'assets/img/icono.png'),
@@ -17,7 +17,7 @@ const createWindow = () => {
         }
     })
 
-win.loadFile('views/index.html')
+win.loadFile('views/menu.html')
 
 
 ipcMain.on('show-notification',(event,titttle,body) => {
@@ -69,7 +69,7 @@ const createMenu = () => {
                 {type:'separator'},
                 {
                     label:'Salir',
-                    accelerator: proccess.platform === 'darwin' ? 'Cmd+Q':'Ctrl+Q',
+                    accelerator: process.platform === 'darwin' ? 'Cmd+Q':'Ctrl+Q',
                     click: ()   => {
                         app.quit()
                     }

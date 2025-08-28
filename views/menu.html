@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>Sopa de Letras - Menú</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="menu-container">
+        <h1 class="game-title">Sopa de Letras</h1>
+        <p class="game-subtitle">Un desafío para tu mente</p>
+
+        <div class="menu-buttons">
+            <button class="menu-btn primary" id="play-btn">
+                <i class="fas fa-play"></i> Jugar
+            </button>
+            <button class="menu-btn secondary" id="stats-btn">
+                <i class="fas fa-chart-bar"></i> Estadísticas
+            </button>
+            <button class="menu-btn tertiary" id="settings-btn">
+                <i class="fas fa-cog"></i> Configuración
+            </button>
+        </div>
+
+        <div class="game-info">
+            <h3>Cómo Jugar</h3>
+            <p>
+                Selecciona una categoría y dificultad para generar una nueva sopa de letras.
+                Usa el mouse para seleccionar las palabras ocultas.
+            </p>
+            <div class="game-features">
+                <div class="feature-item">
+                    <i class="fas fa-puzzle-piece"></i> Diferentes categorías
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-cogs"></i> Niveles de dificultad
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-trophy"></i> Récords y estadísticas
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../src/renderer.js"></script>
+</body>
+</html>
