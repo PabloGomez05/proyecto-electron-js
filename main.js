@@ -217,8 +217,153 @@ const createMenu = () => {
 
 }
 
+// Función para mostrar notificaciones
+const showNotification = (title, body, icon = 'info') => {
+    if (Notification.isSupported()) {
+        new Notification({
+            title: title,
+            body: body,
+            icon: path.join(__dirname, 'assets', 'icons', `${icon}.png`)
+        }).show()
+    }
+}
+
+// Función para guardar partida
+const saveGame = async () => {
+    const { filePath } = await dialog.showSaveDialog(mainWindow, {
+        title: 'Guardar Partida',
+        defaultPath: 'mi-partida.json',
+        filters: [
+            { name: 'Archivos de Partida', extensions: ['json'] }
+        ]
+    })
+    
+    if (filePath) {
+        mainWindow.webContents.send('save-game', filePath)
+    }
+}
+
+// Función para cargar partida
+const loadGame = async () => {
+    const { filePaths } = await dialog.showOpenDialog(mainWindow, {
+        title: 'Cargar Partida',
+        filters: [
+            { name: 'Archivos de Partida', extensions: ['json'] }
+        ],
+        properties: ['openFile']
+    })
+    
+    if (filePaths.length > 0) {
+        mainWindow.webContents.send('load-game', filePaths[0])
+    }
+}
+
+// Función para mostrar estadísticas
+const showStats = () => {
+    const statsWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        parent: mainWindow,
+        modal: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    })
+    
+    statsWindow.loadFile('views/stats.html')
+    statsWindow.setMenu(null)
+}
+
+// Función para mostrar configuración
+const showSettings = () => {
+    const settingsWindow = new BrowserWindow({
+        width: 600,
+        height: 500,
+        parent: mainWindow,
+        modal: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    })
+    
+    settingsWindow.loadFile('views/settings.html')
+    settingsWindow.setMenu(null)
+}
+
+// Función para mostrar manual de usuario
+const showUserManual = () => {
+    dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: 'Manual de Usuario',
+        message: 'Cómo Jugar Sopa de Letras',
+        detail: `
+1. Selecciona una categoría desde el menú
+2. Elige el nivel de dificultad
+3. Busca las palabras en la grilla
+4. Haz clic y arrastra para seleccionar palabras
+5. ¡Encuentra todas las palabras antes de que se acabe el tiempo!
+
+Atajos de teclado:
+• Ctrl+N: Nueva partida
+• Space: Pausar/Reanudar
+• Ctrl+S: Guardar partida
+• Ctrl+E: Ver estadísticas`
+    })
+}
+
+// Función para mostrar información de la app
+const showAbout = () => {
+    dialog.showMessageBox(mainWindow, {
+        type: 'info',
+        title: 'Acerca de Sopa de Letras',
+        message: 'Sopa de Letras v1.0.0',
+        detail: 'Desarrollado con Electron JS\n© 2025 - Proyecto Académico TSDS SIO'
+    })
+}
+
+// IPC Handlers - Comunicación con renderer
+ipcMain.handle('show-notification', (event, title, body, icon) => {
+    showNotification(title, body, icon)
+})
+
+ipcMain.handle('export-stats', async (event, data) => {
+    const { filePath } = await dialog.showSaveDialog(mainWindow, {
+        title: 'Exportar Estadísticas',
+        defaultPath: 'estadisticas.json',
+        filters: [
+            { name: 'JSON', extensions: ['json'] },
+            { name: 'CSV', extensions: ['csv'] }
+        ]
+    })
+    
+    if (filePath) {
+        return filePath
+    }
+    return null
+})
+
 
 
 app.whenReady().then(() => {
     createWindow()
+    createMenu()
+
+
+    setTimeout(() => {
+        showNotification('¡Bienvenido!', 'Disfruta jugando Sopa de Letras')
+    }, 2000)
+})
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+})
+
+app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow()
+    }
 })
