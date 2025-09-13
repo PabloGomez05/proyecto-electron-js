@@ -157,7 +157,7 @@ const createMenu = () => {
 // Navegar a la pantalla de juego
 const navigateToGame = () => {
     if (mainWindow) {
-        mainWindow.loadFile('views/game.html');
+        mainWindow.loadFile('views/index.html');
     }
 };
 

@@ -1,0 +1,857 @@
+<link rel="stylesheet" href="styles.css"><!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - Sopa de Letras</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #ecf0f1;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #3498db;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 1.1em;
+        }
+
+        .stat-value.positive {
+            color: #2ecc71;
+        }
+
+        .stat-value.neutral {
+            color: #f39c12;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .chart-container h3 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill.excellent {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        }
+
+        .progress-fill.good {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .progress-fill.average {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .progress-fill.poor {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .progress-label {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .recent-games {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .games-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .games-table th,
+        .games-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .games-table th {
+            background: rgba(52, 152, 219, 0.2);
+            font-weight: 600;
+            color: #3498db;
+        }
+
+        .games-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .category-badge.animals {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .category-badge.countries {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+
+        .category-badge.science {
+            background: rgba(155, 89, 182, 0.2);
+            color: #9b59b6;
+        }
+
+        .category-badge.sports {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+
+        .achievements {
+            margin-top: 30px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .achievement-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-item.unlocked {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .achievement-item.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #f39c12;
+        }
+
+        .achievement-desc {
+            font-size: 0.85em;
+            opacity: 0.8;
+            line-height: 1.3;
+        }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn.primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: transparent;
+            color: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            border-color: #3498db;
+        }
+
+        .filter-btn:hover {
+            border-color: #3498db;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+            }
+            
+            .games-table {
+                font-size: 0.9em;
+            }
+            
+            .games-table th,
+            .games-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <div class="header">
+            <h1>📊 Estadísticas del Juego</h1>
+            <p>Revisa tu progreso y logros en la Sopa de Letras</p>
+        </div>
+
+        <div class="controls-bar">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="animals">🐾 Animales</button>
+                <button class="filter-btn" data-filter="countries">🌍 Países</button>
+                <button class="filter-btn" data-filter="science">🔬 Ciencias</button>
+                <button class="filter-btn" data-filter="sports">⚽ Deportes</button>
+            </div>
+            
+            <div>
+                <button class="btn secondary" id="export-btn">📤 Exportar</button>
+                <button class="btn danger" id="clear-btn">🗑️ Limpiar</button>
+                <button class="btn primary" id="refresh-btn">🔄 Actualizar</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stats-card">
+                <h3>📈 Estadísticas Generales</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Partidas Jugadas</span>
+                    <span class="stat-value" id="total-games">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Puntuación Total</span>
+                    <span class="stat-value positive" id="total-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Promedio de Puntos</span>
+                    <span class="stat-value neutral" id="avg-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Mejor Puntuación</span>
+                    <span class="stat-value positive" id="best-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Tiempo Total Jugado</span>
+                    <span class="stat-value" id="total-time">0 min</span>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h3>🎯 Rendimiento por Categoría</h3>
+                <div id="category-stats">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h3>📅 Actividad Reciente</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Última Partida</span>
+                    <span class="stat-value" id="last-game">Nunca</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Racha Actual</span>
+                    <span class="stat-value neutral" id="current-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Mejor Racha</span>
+                    <span class="stat-value positive" id="best-streak">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Partidas Esta Semana</span>
+                    <span class="stat-value" id="week-games">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>📊 Progreso de Puntuaciones</h3>
+            <div id="score-chart">
+                <!-- Se llenará dinámicamente con un gráfico simple -->
+            </div>
+        </div>
+
+        <div class="recent-games">
+            <h3>🕐 Partidas Recientes</h3>
+            <table class="games-table" id="games-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Categoría</th>
+                        <th>Puntuación</th>
+                        <th>Duración</th>
+                        <th>Rendimiento</th>
+                    </tr>
+                </thead>
+                <tbody id="games-tbody">
+                    <!-- Se llenará dinámicamente -->
+                </tbody>
+            </table>
+            
+            <div class="empty-state" id="empty-state" style="display: none;">
+                <div class="empty-state-icon">🎮</div>
+                <h3>No hay partidas registradas</h3>
+                <p>¡Juega algunas partidas para ver tus estadísticas!</p>
+            </div>
+        </div>
+
+        <div class="achievements">
+            <h3>🏆 Logros</h3>
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        class StatsManager {
+            constructor() {
+                this.currentFilter = 'all';
+                this.gameStats = [];
+                this.achievements = [
+                    {
+                        id: 'first_game',
+                        icon: '🎯',
+                        title: 'Primera Partida',
+                        description: 'Juega tu primera partida',
+                        condition: (stats) => stats.length >= 1
+                    },
+                    {
+                        id: 'high_scorer',
+                        icon: '🔥',
+                        title: 'Puntuador Alto',
+                        description: 'Consigue 100+ puntos',
+                        condition: (stats) => stats.some(game => game.score >= 100)
+                    },
+                    {
+                        id: 'category_master',
+                        icon: '🎓',
+                        title: 'Maestro de Categorías',
+                        description: 'Juega en todas las categorías',
+                        condition: (stats) => {
+                            const categories = new Set(stats.map(game => game.category));
+                            return categories.size >= 4;
+                        }
+                    },
+                    {
+                        id: 'speed_demon',
+                        icon: '⚡',
+                        title: 'Demonio de Velocidad',
+                        description: 'Termina una partida en menos de 30 segundos',
+                        condition: (stats) => stats.some(game => game.duration <= 30)
+                    },
+                    {
+                        id: 'persistent',
+                        icon: '💪',
+                        title: 'Persistente',
+                        description: 'Juega 10 partidas',
+                        condition: (stats) => stats.length >= 10
+                    },
+                    {
+                        id: 'perfectionist',
+                        icon: '💎',
+                        title: 'Perfeccionista',
+                        description: 'Consigue 200+ puntos',
+                        condition: (stats) => stats.some(game => game.score >= 200)
+                    }
+                ];
+                
+                this.loadStats();
+                this.setupEventListeners();
+                this.updateDisplay();
+            }
+
+            loadStats() {
+                this.gameStats = JSON.parse(localStorage.getItem('wordGameStats') || '[]');
+            }
+
+            setupEventListeners() {
+                // Filtros de categoría
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.dataset.filter;
+                        this.updateDisplay();
+                    });
+                });
+
+                // Botones de control
+                document.getElementById('refresh-btn').addEventListener('click', () => {
+                    this.loadStats();
+                    this.updateDisplay();
+                });
+
+                document.getElementById('export-btn').addEventListener('click', () => {
+                    this.exportStats();
+                });
+
+                document.getElementById('clear-btn').addEventListener('click', () => {
+                    this.clearStats();
+                });
+
+                // Comunicación con el proceso principal
+                ipcRenderer.on('stats-updated', () => {
+                    this.loadStats();
+                    this.updateDisplay();
+                });
+            }
+
+            getFilteredStats() {
+                if (this.currentFilter === 'all') {
+                    return this.gameStats;
+                }
+                return this.gameStats.filter(game => game.category === this.currentFilter);
+            }
+
+            updateDisplay() {
+                const filteredStats = this.getFilteredStats();
+                
+                if (filteredStats.length === 0) {
+                    this.showEmptyState();
+                    return;
+                }
+
+                this.hideEmptyState();
+                this.updateGeneralStats(filteredStats);
+                this.updateCategoryStats();
+                this.updateRecentActivity(filteredStats);
+                this.updateGamesTable(filteredStats);
+                this.updateScoreChart(filteredStats);
+                this.updateAchievements();
+            }
+
+            updateGeneralStats(stats) {
+                const totalGames = stats.length;
+                const totalScore = stats.reduce((sum, game) => sum + game.score, 0);
+                const avgScore = totalGames > 0 ? Math.round(totalScore / totalGames) : 0;
+                const bestScore = totalGames > 0 ? Math.max(...stats.map(game => game.score)) : 0;
+                const totalTime = stats.reduce((sum, game) => sum + game.duration, 0);
+
+                document.getElementById('total-games').textContent = totalGames;
+                document.getElementById('total-score').textContent = totalScore;
+                document.getElementById('avg-score').textContent = avgScore;
+                document.getElementById('best-score').textContent = bestScore;
+                document.getElementById('total-time').textContent = `${Math.round(totalTime / 60)} min`;
+            }
+
+            updateCategoryStats() {
+                const categoryStatsEl = document.getElementById('category-stats');
+                const categories = ['animals', 'countries', 'science', 'sports'];
+                const categoryNames = {
+                    'animals': '🐾 Animales',
+                    'countries': '🌍 Países',
+                    'science': '🔬 Ciencias',
+                    'sports': '⚽ Deportes'
+                };
+
+                categoryStatsEl.innerHTML = '';
+
+                categories.forEach(category => {
+                    const categoryGames = this.gameStats.filter(game => game.category === category);
+                    const avgScore = categoryGames.length > 0 
+                        ? Math.round(categoryGames.reduce((sum, game) => sum + game.score, 0) / categoryGames.length)
+                        : 0;
+                    
+                    const maxScore = 200; // Puntuación máxima teórica
+                    const percentage = Math.min((avgScore / maxScore) * 100, 100);
+                    
+                    let performanceClass = 'poor';
+                    if (percentage >= 75) performanceClass = 'excellent';
+                    else if (percentage >= 50) performanceClass = 'good';
+                    else if (percentage >= 25) performanceClass = 'average';
+
+                    const statItem = document.createElement('div');
+                    statItem.className = 'stat-item';
+                    statItem.innerHTML = `
+                        <span class="stat-label">${categoryNames[category]} (${categoryGames.length} partidas)</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${performanceClass}" style="width: ${percentage}%">
+                                <span class="progress-label">${avgScore} pts</span>
+                            </div>
+                        </div>
+                    `;
+                    categoryStatsEl.appendChild(statItem);
+                });
+            }
+
+            updateRecentActivity(stats) {
+                if (stats.length === 0) {
+                    document.getElementById('last-game').textContent = 'Nunca';
+                    document.getElementById('current-streak').textContent = '0';
+                    document.getElementById('best-streak').textContent = '0';
+                    document.getElementById('week-games').textContent = '0';
+                    return;
+                }
+
+                // Última partida
+                const lastGame = stats[stats.length - 1];
+                const lastGameDate = new Date(lastGame.date);
+                document.getElementById('last-game').textContent = this.formatDate(lastGameDate);
+
+                // Partidas de esta semana
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                const weekGames = stats.filter(game => new Date(game.date) >= weekAgo);
+                document.getElementById('week-games').textContent = weekGames.length;
+
+                // Rachas (simplificado)
+                document.getElementById('current-streak').textContent = Math.min(weekGames.length, 7);
+                document.getElementById('best-streak').textContent = Math.max(weekGames.length, 3);
+            }
+
+            updateGamesTable(stats) {
+                const tbody = document.getElementById('games-tbody');
+                tbody.innerHTML = '';
+
+                // Mostrar las últimas 10 partidas
+                const recentGames = stats.slice(-10).reverse();
+
+                recentGames.forEach(game => {
+                    const row = document.createElement('tr');
+                    const performance = this.getPerformanceRating(game.score);
+                    
+                    row.innerHTML = `
+                        <td>${this.formatDate(new Date(game.date))}</td>
+                        <td><span class="category-badge ${game.category}">${this.getCategoryName(game.category)}</span></td>
+                        <td><strong>${game.score}</strong></td>
+                        <td>${game.duration}s</td>
+                        <td>${performance}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            updateScoreChart(stats) {
+                const chartEl = document.getElementById('score-chart');
+                chartEl.innerHTML = '';
+
+                if (stats.length === 0) return;
+
+                // Crear un gráfico simple con barras
+                const maxScore = Math.max(...stats.map(game => game.score));
+                const recentGames = stats.slice(-10);
+
+                const chartContainer = document.createElement('div');
+                chartContainer.style.cssText = `
+                    display: flex;
+                    align-items: end;
+                    height: 200px;
+                    gap: 5px;
+                    padding: 20px 0;
+                    justify-content: center;
+                `;
+
+                recentGames.forEach((game, index) => {
+                    const barHeight = (game.score / maxScore) * 150;
+                    const bar = document.createElement('div');
+                    bar.style.cssText = `
+                        width: 30px;
+                        height: ${barHeight}px;
+                        background: linear-gradient(to top, #3498db, #5dade2);
+                        border-radius: 3px 3px 0 0;
+                        position: relative;
+                        transition: all 0.3s ease;
+                        cursor: pointer;
+                        margin: 0 2px;
+                    `;
+                    
+                    bar.title = `Partida ${recentGames.length - index}: ${game.score} puntos`;
+                    
+                    bar.addEventListener('mouseenter', () => {
+                        bar.style.background = 'linear-gradient(to top, #e74c3c, #ec7063)';
+                        bar.style.transform = 'translateY(-5px)';
+                    });
+                    
+                    bar.addEventListener('mouseleave', () => {
+                        bar.style.background = 'linear-gradient(to top, #3498db, #5dade2)';
+                        bar.style.transform = 'translateY(0)';
+                    });
+
+                    chartContainer.appendChild(bar);
+                });
+
+                chartEl.appendChild(chartContainer);
+            }
+
+            updateAchievements() {
+                const achievementsGrid = document.getElementById('achievements-grid');
+                achievementsGrid.innerHTML = '';
+
+                this.achievements.forEach(achievement => {
+                    const unlocked = achievement.condition(this.gameStats);
+                    
+                    const achievementEl = document.createElement('div');
+                    achievementEl.className = `achievement-item ${unlocked ? 'unlocked' : 'locked'}`;
+                    
+                    achievementEl.innerHTML = `
+                        <span class="achievement-icon">${achievement.icon}</span>
+                        <div class="achievement-title">${achievement.title}</div>
+                        <div class="achievement-desc">${achievement.description}</div>
+                    `;
+                    
+                    achievementsGrid.appendChild(achievementEl);
+                });
+            }
+
+            showEmptyState() {
+                document.getElementById('empty-state').style.display = 'block';
+                document.getElementById('games-table').style.display = 'none';
+            }
+
+            hideEmptyState() {
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('games-table').style.display = 'table';
+            }
+
+            formatDate(date) {
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) return 'Hoy';
+                if (diffDays === 2) return 'Ayer';
+                if (diffDays <= 7) return `Hace ${diffDays - 1} días`;
+                
+                return date.toLocaleDateString('es-ES');
+            }
+
+            getCategoryName(category) {
+                const names = {
+                    'animals': 'Animales',
+                    'countries': 'Países',
+                    'science': 'Ciencias',
+                    'sports': 'Deportes'
+                };
+                return names[category] || category;
+            }
+
+            getPerformanceRating(score) {
+                if (score >= 150) return '🔥 Excelente';
+                if (score >= 100) return '⭐ Muy Bien';
+                if (score >= 50) return '👍 Bien';
+                if (score >= 20) return '📈 Regular';
+                return '💪 Sigue Practicando';
+            }
+
+            exportStats() {
+                const dataStr = JSON.stringify(this.gameStats, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `word-game-stats-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+            }
+
+            clearStats() {
+                if (confirm('¿Estás seguro de que quieres borrar todas las estadísticas? Esta acción no se puede deshacer.')) {
+                    localStorage.removeItem('wordGameStats');
+                    this.gameStats = [];
+                    this.updateDisplay();
+                    
+                    // Notificar al proceso principal
+                    ipcRenderer.send('stats-cleared');
+                }
+            }
+        }
+
+        // Inicializar el gestor de estadísticas
+        document.addEventListener('DOMContentLoaded', () => {
+            window.statsManager = new StatsManager();
+        });
+
+        // Manejar el cierre de la ventana
+        window.addEventListener('beforeunload', () => {
+            ipcRenderer.send('stats-window-closed');
+        });
+    </script>
+</body>
+</html>
